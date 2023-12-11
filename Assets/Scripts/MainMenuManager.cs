@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -8,9 +9,16 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private TMP_Text _newBestText;
     [SerializeField] private TMP_Text _bestScoreText;
 
+    [SerializeField] private Button musicButton;
+    [SerializeField] private Sprite musicOnSprite;
+    [SerializeField] private Sprite musicOffSprite;
+
+    [SerializeField] private Button soundButton;
+    [SerializeField] private Sprite soundOnSprite;
+    [SerializeField] private Sprite soundOffSprite;
+
     private void Awake()
     {
-
         _bestScoreText.text = GameManager.Instance.HighScore.ToString();
 
         if(!GameManager.Instance.IsInitialized)
@@ -22,6 +30,9 @@ public class MainMenuManager : MonoBehaviour
         {
             StartCoroutine(ShowScore());
         }
+
+        SetSprites();
+        ButtonClickAction();
     }
 
     [SerializeField] private float _animationTime;
@@ -66,7 +77,72 @@ public class MainMenuManager : MonoBehaviour
 
     public void ClickedPlay()
     {
-        SoundManager.Instance.PlaySound(_clickClip);
+        AudioManager.instance.Play("Click");
         GameManager.Instance.GotoGameplay();
     }
+
+    private void ButtonClickAction()
+    {
+        if (musicButton != null)
+        {
+            musicButton.onClick.RemoveAllListeners();
+            musicButton.onClick.AddListener(() =>
+            {
+                AudioManager.instance.Play("Click");
+
+                if (PlayerPrefs.GetFloat("MusicVolume") == 1)
+                {
+                    AudioManager.instance.OffMusic();
+                }
+                else
+                {
+                    AudioManager.instance.OnMusic();
+                }
+
+                SetSprites();
+            });
+        }
+
+        if (soundButton != null)
+        {
+            soundButton.onClick.RemoveAllListeners();
+            soundButton.onClick.AddListener(() =>
+            {
+                AudioManager.instance.Play("Click");
+
+                if (PlayerPrefs.GetFloat("SoundVolume") == 1)
+                {
+                    AudioManager.instance.OffSound();
+                }
+                else
+                {
+                    AudioManager.instance.OnSound();
+                }
+
+                SetSprites();
+            });
+        }
+    }
+
+    private void SetSprites()
+    {
+        if (PlayerPrefs.GetFloat("MusicVolume") == 1)
+        {
+            musicButton.GetComponent<Image>().sprite = musicOnSprite;
+        }
+        else if (PlayerPrefs.GetFloat("MusicVolume") == 0)
+        {
+            musicButton.GetComponent<Image>().sprite = musicOffSprite;
+        }
+
+        if (PlayerPrefs.GetFloat("SoundVolume") == 1)
+        {
+            soundButton.GetComponent<Image>().sprite = soundOnSprite;
+        }
+        else if (PlayerPrefs.GetFloat("SoundVolume") == 0)
+        {
+            soundButton.GetComponent<Image>().sprite = soundOffSprite;
+        }
+    }
 }
+

@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
-            SoundManager.Instance.PlaySound(_moveClip);
+            AudioManager.instance.Play("Move");
             _rotateSpeed *= -1f;
         }    
     }
@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
         if(collision.gameObject.CompareTag("Obstacle"))
         {
             Instantiate(_explosionPrefab, transform.GetChild(0).position, Quaternion.identity);
-            SoundManager.Instance.PlaySound(_loseClip);
+            AudioManager.instance.Play("Lose");
             _gm.GameEnded();
             Destroy(gameObject);
         }
